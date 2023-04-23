@@ -18,7 +18,7 @@ let current_i = math.divide(kva_i, voltage_i);
 
 
 loads[loads.length - 1].ir = math.re(current_i)
-loads[loads.length - 1].ii = math.im(current_i)
+loads[loads.length - 1].ii = math.im(current_i) * -1
 
 
 
@@ -29,14 +29,14 @@ for (let i = loads.length - 1; i >= 2; i--) {
   const current_i_1 = math.divide(kva_i_1, voltage_i_1);
   if (i == loads.length - 1) {
       loads[i-1].ir = math.re(current_i_1)
-      loads[i-1].ii = math.im(current_i_1)
+    loads[i - 1].ii = math.im(current_i_1) * -1
      
   }
 
 
   const current_i_2 = math.add(current_i_1, current_i)
   loads[i-2].ir = math.re(current_i_2)
-  loads[i-2].ii = math.im(current_i_2)
+  loads[i-2].ii = math.im(current_i_2)*-1
   current_i = current_i_2
   
 

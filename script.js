@@ -10,42 +10,61 @@ const worksheet = workbook.Sheets['Sheet1']
 const loads = xlsx.utils.sheet_to_json(worksheet)
 
 
-const kva_i = math.complex(loads[loads.length - 1].p, loads[loads.length - 1].q);
+// R_OHM: 0.896,
+//   X_OHM: 0.7011,
+//     Z_OHM: 1.1376982069072623,
+//       realLoad: 420,
+//         reactiveLoad: 200,
+//           Re_Node_voltages: 11.55,
+//             Imz_Node_voltages: 0
 
-const voltage_i = math.complex(loads[loads.length - 1].rv, loads[loads.length - 1].iv);
+
+
+const kva_i = math.complex(loads[loads.length - 1].realLoad, loads[loads.length - 1].reactiveLoad);
+
+const voltage_i = math.complex(loads[loads.length - 1].Re_Node_voltages, loads[loads.length - 1].Imz_Node_voltages);
 
 let current_i = math.divide(kva_i, voltage_i);
 
+current_i=current_i.conjugate()
 
-loads[loads.length - 1].ir = math.re(current_i)
-loads[loads.length - 1].ii = math.im(current_i) * -1
+
+loads[loads.length - 1].Re_line_current = math.re(current_i)
+loads[loads.length - 1].Imz_line_current = math.im(current_i) 
 
 
 
 for (let i = loads.length - 1; i >= 2; i--) {
 
-  const kva_i_1 = math.complex(loads[i - 1].p, loads[i - 1].q);
-  const voltage_i_1 = math.complex(loads[i - 1].rv, loads[i - 1].iv);
-  const current_i_1 = math.divide(kva_i_1, voltage_i_1);
+  let kva_i_1 = math.complex(loads[i - 1].realLoad, loads[i - 1].reactiveLoad);
+  let voltage_i_1 = math.complex(loads[i - 1].Re_Node_voltages, loads[i - 1].Imz_Node_voltages);
+  let current_i_1 = math.divide(kva_i_1, voltage_i_1);
+
+  current_i_1=current_i_1.conjugate()
+
   if (i == loads.length - 1) {
-      loads[i-1].ir = math.re(current_i_1)
-    loads[i - 1].ii = math.im(current_i_1) * -1
-     
+   
+    loads[i-1].Re_line_current = math.re(current_i_1)
+    loads[i - 1].Imz_line_current = math.im(current_i_1) 
+
   }
-
-
-  const current_i_2 = math.add(current_i_1, current_i)
-  loads[i-2].ir = math.re(current_i_2)
-  loads[i-2].ii = math.im(current_i_2)*-1
-  current_i = current_i_2
+ 
+  let current_i_2 = math.add(current_i_1, current_i)
   
+  
+  loads[i-2].Re_line_current = math.re(current_i_2)
+  loads[i-2].Imz_line_current = math.im(current_i_2)
+  current_i = current_i_2
 
+  console.log(current_i.toPolar().r)
+  
+ 
 }
 
 
 
-const newWorkbook = xlsx.utils.book_new()
-const newWorksheet = xlsx.utils.json_to_sheet(loads)
-xlsx.utils.book_append_sheet(newWorkbook,newWorksheet,'New Data')
+// const newWorkbook = xlsx.utils.book_new()
+// const newWorksheet = xlsx.utils.json_to_sheet(loads)
+// xlsx.utils.book_append_sheet(newWorkbook,newWorksheet,'Sheet1')
 
-xlsx.writeFile(newWorkbook, 'new Data File .xlsx')
+// xlsx.writeFile(newWorkbook, 'Book2.xlsx')

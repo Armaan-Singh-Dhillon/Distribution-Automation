@@ -19,7 +19,7 @@ const worksheet = workbook.Sheets['Sheet1']
 const loads = xlsx.utils.sheet_to_json(worksheet)
 
 
-
+let max = 0
 let voltage_i = math.complex(11500, 0);
 for (let i = 0; i < loads.length; i++) {
     const z_i = math.complex(loads[i].R_OHM, loads[i].X_OHM);
@@ -29,11 +29,10 @@ for (let i = 0; i < loads.length; i++) {
     voltage_i = voltage_i_1;
     loads[i].Re_Node_voltages_iteration_1 = math.re(voltage_i)
     loads[i].Imz_Node_voltages_iteration_1 = math.im(voltage_i)
-
-    console.log(voltage_i)
+    max = Math.max(max, voltage_i.toPolar().r)
   
 }
-
+console.log(max)
 
 
 // const newWorkbook = xlsx.utils.book_new()

@@ -9,20 +9,10 @@ const worksheet = workbook.Sheets['Sheet1']
 
 const loads = xlsx.utils.sheet_to_json(worksheet)
 
+//residential load 
+const kva_i = math.complex(90,40);
 
-// R_OHM: 0.896,
-//   X_OHM: 0.7011,
-//     Z_OHM: 1.1376982069072623,
-//       realLoad: 420,
-//         reactiveLoad: 200,
-//           Re_Node_voltages: 11.55,
-//             Imz_Node_voltages: 0
-
-
-
-const kva_i = math.complex(loads[loads.length - 1].realLoad, loads[loads.length - 1].reactiveLoad);
-
-const voltage_i = math.complex(loads[loads.length - 1].Re_Node_voltages, loads[loads.length - 1].Imz_Node_voltages);
+const voltage_i = math.complex(11.5,0);
 
 let current_i = math.divide(kva_i, voltage_i);
 
@@ -56,15 +46,13 @@ for (let i = loads.length - 1; i >= 2; i--) {
   loads[i-2].Imz_line_current = math.im(current_i_2)
   current_i = current_i_2
 
-  console.log(current_i.toPolar().r)
-  
  
 }
 
 
 
-// const newWorkbook = xlsx.utils.book_new()
-// const newWorksheet = xlsx.utils.json_to_sheet(loads)
-// xlsx.utils.book_append_sheet(newWorkbook,newWorksheet,'Sheet1')
+const newWorkbook = xlsx.utils.book_new()
+const newWorksheet = xlsx.utils.json_to_sheet(loads)
+xlsx.utils.book_append_sheet(newWorkbook,newWorksheet,'Sheet1')
 
-// xlsx.writeFile(newWorkbook, 'Book2.xlsx')
+xlsx.writeFile(newWorkbook, 'Book2.xlsx')

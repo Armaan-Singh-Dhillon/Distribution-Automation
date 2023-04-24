@@ -10,7 +10,7 @@ const loads = xlsx.utils.sheet_to_json(worksheet)
 
 
 //   {
-    
+
 //     R_OHM: 0.896,
 //     X_OHM: 0.7011,
 //     Z_OHM: 1.1376982069072623,
@@ -25,8 +25,9 @@ const loads = xlsx.utils.sheet_to_json(worksheet)
 //     Re_Node_voltages: 11.55,
 //     Imz_Node_voltages: 0
 //   }
+let max = 0
 
-let voltage_i = math.complex(11500, 0);
+let voltage_i = math.complex(11266.6597413839, 23.7088392354493);
 for (let i = 0; i < loads.length; i++) {
     const z_i = math.complex(loads[i].R_OHM, loads[i].X_OHM);
     const current_i = math.complex(loads[i].Re_line_current_iteration_1, loads[i].Imz_line_current_iteration_1);
@@ -35,14 +36,16 @@ for (let i = 0; i < loads.length; i++) {
     voltage_i = voltage_i_1;
     loads[i].Re_Node_voltages_iteration_2 = math.re(voltage_i)
     loads[i].Imz_Node_voltages_iteration_2 = math.im(voltage_i)
+    max = Math.max(max, voltage_i.toPolar().r)
 
-   console.log(voltage_i.toPolar().r)
+
+
 }
+console.log(max)
 
 
+const newWorkbook = xlsx.utils.book_new()
+const newWorksheet = xlsx.utils.json_to_sheet(loads)
+xlsx.utils.book_append_sheet(newWorkbook, newWorksheet, 'Sheet1')
 
-// const newWorkbook = xlsx.utils.book_new()
-// const newWorksheet = xlsx.utils.json_to_sheet(loads)
-// xlsx.utils.book_append_sheet(newWorkbook, newWorksheet, 'Sheet1')
-
-// xlsx.writeFile(newWorkbook, 'Book5.xlsx')
+xlsx.writeFile(newWorkbook, 'Book5.xlsx')
